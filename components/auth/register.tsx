@@ -27,13 +27,14 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
+  const baseURL = process.env.BASE_URL
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const apiClient = new ApiClient("http://localhost:3001");
+    const apiClient = new ApiClient(baseURL||"");
     try {
       const res = await apiClient.post("/api/v1/register", {
         username,
