@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ApiClient } from "@/lib/api-client";
-import dotenv from "dotenv";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/features/userSlice";
 import { useRouter } from "next/navigation";
+import { baseURL } from "@/constants/url";
 
-dotenv.config();
 
 export interface Data {
   token: string;
@@ -27,14 +26,14 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
-  const baseURL = process.env.BASE_URL
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    const apiClient = new ApiClient(baseURL||"");
+    console.log(baseURL)
+    const apiClient = new ApiClient(baseURL);
     try {
       const res = await apiClient.post("/api/v1/register", {
         username,

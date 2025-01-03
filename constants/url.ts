@@ -1,0 +1,1 @@
+export const baseURL = "https://yeabsira-blogs-backend-production.up.railway.app"
