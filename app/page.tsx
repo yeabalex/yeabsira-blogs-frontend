@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/getCookie";
+import LandingPage from "@/components/landing-page";
 
 function AuthStatus({ token, user }: { token: string | null, user: {username:string|null} }) {
   return token ? user?.username : "Login";
@@ -33,7 +34,7 @@ export default function Home() {
   return (
     <>
       <UserData />
-      <p>Blogs</p>
+      <LandingPage/>
     </>
   );
 }

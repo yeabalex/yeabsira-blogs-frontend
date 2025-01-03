@@ -1,15 +1,47 @@
 'use client'
 import React, { useState } from 'react';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { ApiClient } from '@/lib/api-client';
+import { baseURL } from '@/constants/url';
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/redux/features/userSlice';
+import { Data } from './register';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const dispatch = useDispatch()
+  const router = useRouter()
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    console.log('Login attempt with:', { email, password });
+    setIsLoading(true);
+    setError("");
+
+    const apiClient = new ApiClient(baseURL);
+    try {
+      const res = await apiClient.post("/api/v1/login", {
+        email,
+        password,
+      });
+      const data = res.data as Data;
+      dispatch(setUser(data));
+      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
+      document.cookie = `user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=${7 * 24 * 60 * 60}`;
+      router.push("/");
+    } catch (err) {
+      console.log("No woman")
+      console.log(err)
+      setError(
+        (err as Error).message || "Registration failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,6 +62,29 @@ const LoginPage = () => {
             <h2 className="text-4xl font-bold text-gray-900 mb-2">Welcome back to Yeabsira Blogs</h2>
             <p className="text-gray-600">Please enter your details to sign in</p>
           </div>
+
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-4">
@@ -89,10 +144,20 @@ const LoginPage = () => {
           
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-[#1DB954] hover:bg-[#18a348] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1DB954]"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-[#1DB954] hover:bg-[#18a348] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1DB954] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign in
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                  Hold up...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
 
             <p className="text-center text-sm text-gray-600">

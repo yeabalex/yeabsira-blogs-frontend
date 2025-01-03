@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 interface RequestConfig extends AxiosRequestConfig {
   requiresAuth?: boolean;
@@ -112,7 +112,7 @@ export class ApiClient {
       const response = await this.client.request<T>(config);
       return this.handleSuccess(response);
     } catch (error) {
-      throw this.handleError(error as AxiosError);
+      throw this.handleError(error as {response:{status:unknown, data:{message:string}}, message:string});
     }
   }
 
@@ -127,13 +127,27 @@ export class ApiClient {
     };
   }
 
-  private handleError(error: AxiosError): Error {
-      //const status =  error.response?.status;
-      const message = error.message;
+  private handleError(error: {response:{status:unknown, data:{message:string}}, message:string}): Error {
+    
+      const status = error.response?.status;
+      const message = error.response?.data?.message || error.message;
 
-      throw new Error(`${message}`);
-    }
-
+      switch (status) {
+        case 401:
+          throw new Error(message);
+        case 403:
+          throw new Error('Forbidden. You do not have access to this resource.');
+        case 404:
+          throw new Error('Resource not found.');
+        case 422:
+          throw new Error(message);
+        case 500:
+          throw new Error('Internal server error. Please try again later.');
+        default:
+          throw new Error(message || 'An unexpected error occurred.');
+      }
+    
+  }
 
   public async uploadFile<T>(
     path: string,
