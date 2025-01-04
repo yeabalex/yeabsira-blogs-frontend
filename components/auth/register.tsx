@@ -4,10 +4,9 @@ import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ApiClient } from "@/lib/api-client";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/features/userSlice";
+//import { setUser } from "@/redux/features/userSlice";
 import { useRouter } from "next/navigation";
 import { baseURL } from "@/constants/url";
-
 
 export interface Data {
   token: string;
@@ -24,7 +23,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -32,19 +31,15 @@ const RegisterPage = () => {
     setIsLoading(true);
     setError("");
 
-    console.log(baseURL)
     const apiClient = new ApiClient(baseURL);
     try {
-      const res = await apiClient.post("/api/v1/register", {
+      await apiClient.post("/api/v1/register", {
         username,
         email,
         password,
       });
-      const data = res.data as Data;
-      dispatch(setUser(data));
-      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}`;
-      document.cookie = `user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=${7 * 24 * 60 * 60}`;
-      router.push("/");
+      
+      router.push(`/verify?email=${email}`);
     } catch (err) {
       setError(
         (err as Error).message || "Registration failed. Please try again."
@@ -55,34 +50,36 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full dark:bg-gray-900">
       <div className="hidden lg:flex lg:w-1/2 bg-[#1DB954] items-center justify-center">
         <div className="p-8">
           <div className="relative">
-            <div className="w-64 h-64 rounded-full bg-white/10 animate-[spin_3s_linear_infinite] flex items-center justify-center">
-              <div className="w-48 h-48 rounded-full bg-white/20 animate-[spin_4s_linear_infinite] flex items-center justify-center">
-                <div className="w-32 h-32 rounded-full bg-white/30 animate-[spin_5s_linear_infinite]" />
+            <div className="w-64 h-64 rounded-full bg-white/10 animate-[spin_3s_linear_infinite] flex items-center justify-center dark:bg-gray-200/10">
+              <div className="w-48 h-48 rounded-full bg-white/20 animate-[spin_4s_linear_infinite] flex items-center justify-center dark:bg-gray-200/20">
+                <div className="w-32 h-32 rounded-full bg-white/30 animate-[spin_5s_linear_infinite] dark:bg-gray-200/30" />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-gray-800">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
               Create Account
             </h2>
-            <p className="text-gray-600">Sign up to get started</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Sign up to get started
+            </p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 dark:bg-red-900 dark:border-red-700">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
-                    className="h-5 w-5 text-red-400"
+                    className="h-5 w-5 text-red-400 dark:text-red-200"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -94,7 +91,9 @@ const RegisterPage = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    {error}
+                  </p>
                 </div>
               </div>
             </div>
@@ -103,18 +102,18 @@ const RegisterPage = () => {
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   </div>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     placeholder="Choose a username"
                     required
                   />
@@ -122,18 +121,18 @@ const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   </div>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     placeholder="Enter your email"
                     required
                   />
@@ -141,23 +140,23 @@ const RegisterPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                    <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   </div>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-[#1DB954] focus:border-[#1DB954] text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     placeholder="Create a password"
                     required
                   />
                 </div>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   Password must be at least 8 characters long and contain at
                   least one number
                 </p>
@@ -168,9 +167,9 @@ const RegisterPage = () => {
               <input
                 type="checkbox"
                 required
-                className="h-4 w-4 text-[#1DB954] focus:ring-[#1DB954] border-gray-300 rounded"
+                className="h-4 w-4 text-[#1DB954] focus:ring-[#1DB954] border-gray-300 rounded dark:border-gray-600"
               />
-              <label className="ml-2 block text-sm text-gray-700">
+              <label className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                 I agree to the{" "}
                 <button
                   type="button"
@@ -191,7 +190,7 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-[#1DB954] hover:bg-[#18a348] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1DB954] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-[#1DB954] hover:bg-[#18a348] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1DB954] disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-gray-800"
             >
               {isLoading ? (
                 <>
@@ -206,7 +205,7 @@ const RegisterPage = () => {
               )}
             </button>
 
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{" "}
               <Link href="/login">
                 <button
