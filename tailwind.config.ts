@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily:{
+        sans: ['var(--font-plus-jakarta)'],
+        heading: ['var(--font-inter)'],
+      },
       keyframes:{
         "caret-blink": {
           "0%,70%,100%": { opacity: "1" },

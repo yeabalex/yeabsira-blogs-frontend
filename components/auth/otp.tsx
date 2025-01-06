@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState} from "react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -10,28 +10,38 @@ import { useSearchParams } from "next/navigation";
 import { baseURL } from "@/constants/url";
 import { ApiClient } from "@/lib/api-client";
 import { Data } from "./register";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/features/userSlice";
+import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import type { RootState } from "@/redux/store";
 
 export function InputOTPComponent() {
   const [otp, setOtp] = useState<string>("");
   const query = useSearchParams();
   const email = query.get("email");
-  const dispatch = useDispatch();
   const handleOtpChange = (value: string) => {
     setOtp(value);
   };
   const [error, setError] = useState<string|null>(null)
+  const selector = useSelector((state:RootState)=>state.userReducer)
   const router = useRouter()
 
+  useEffect(()=>{
+    function checkSession(){
+      if(selector.userData.user?.email){
+        return
+      }
+      router.push("/register")
+    }
+    checkSession()
+  },[])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const apiClient = new ApiClient(baseURL);
-      const res = apiClient.post(`/api/v1/verify?email=${email}&code=${otp}`);
+      const res = await apiClient.post(`/api/v1/verify?email=${email}&code=${otp}`);
+      console.log(res)
       const data = (await res).data as Data;
-      dispatch(setUser(data));
+      
       document.cookie = `token=${data.token}; path=/; max-age=${
         7 * 24 * 60 * 60
       }`;

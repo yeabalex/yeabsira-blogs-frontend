@@ -1,19 +1,19 @@
 'use client'
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
 import {store} from "@/redux/store"
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter'
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta'
 });
-
 
 export default function RootLayout({
   children,
@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <Provider store={store}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${plusJakarta.variable} antialiased`}
       >
         {children}
       </body>

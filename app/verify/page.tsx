@@ -1,5 +1,10 @@
 import { InputOTPComponent } from "@/components/auth/otp";
+import { Suspense } from "react";
 
 export default function OTP(){
-    return <InputOTPComponent/>
+    return (
+    <Suspense fallback={<div>Loading...</div>}>
+        <InputOTPComponent/>
+    </Suspense>
+)
 }

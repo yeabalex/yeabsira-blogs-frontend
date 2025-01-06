@@ -4,7 +4,7 @@ import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { ApiClient } from "@/lib/api-client";
 import { useDispatch } from "react-redux";
-//import { setUser } from "@/redux/features/userSlice";
+import { setUser } from "@/redux/features/userSlice";
 import { useRouter } from "next/navigation";
 import { baseURL } from "@/constants/url";
 
@@ -23,7 +23,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -38,7 +38,8 @@ const RegisterPage = () => {
         email,
         password,
       });
-      
+      const userData:Data = {token:"test",user:{email:email, id:"test", username:username}}
+      dispatch(setUser(userData))
       router.push(`/verify?email=${email}`);
     } catch (err) {
       setError(
