@@ -76,7 +76,7 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }:{isLoggedIn:boolean
                 }`}>
                   Log in
                 </Link>
-                <Link href="/signup" className="px-4 py-2 rounded-full font-medium text-white hover:opacity-90"
+                <Link href="/register" className="px-4 py-2 rounded-full font-medium text-white hover:opacity-90"
                   style={{ backgroundColor: spotifyGreen }}>
                   Sign up
                 </Link>
@@ -137,7 +137,7 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }:{isLoggedIn:boolean
                 }`}>
                   Log in
                 </Link>
-                <Link href="/signup" className="block w-full px-4 py-2 rounded-lg text-white text-center hover:opacity-90"
+                <Link href="/register" className="block w-full px-4 py-2 rounded-lg text-white text-center hover:opacity-90"
                   style={{ backgroundColor: spotifyGreen }}>
                   Sign up
                 </Link>

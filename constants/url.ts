@@ -1,1 +1,2 @@
-export const baseURL = "https://yeabsira-blogs-backend-production.up.railway.app"
+export const baseURL = "http://localhost:3001"
+export const blogsBaseURL = "http://localhost:8080"
