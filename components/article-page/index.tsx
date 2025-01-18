@@ -12,6 +12,8 @@ import Like from "../ui/like";
 import { getCookie } from "@/lib/getCookie";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/ui/loading";
+import { useDispatch } from "react-redux";
+import { setBlog } from "@/redux/features/blogsSlice";
 
 export default function Article({ id }: { id: string }) {
   const [showComments, setShowComments] = useState(false);
@@ -44,6 +46,7 @@ export default function Article({ id }: { id: string }) {
   const [article, setArticle] = useState<Article | null>();
   const router = useRouter();
   const [page, setPage] = useState<React.JSX.Element>();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function fetchArticle() {
@@ -62,6 +65,8 @@ export default function Article({ id }: { id: string }) {
             }
           );
           setArticle(res.data as Article);
+          const articleArr:Article[] = [res.data as Article]
+          dispatch(setBlog(articleArr));
         } catch (err) {
           if ((err as Error).message === "Resource not found.") {
             setPage(<NotFoundPage />);

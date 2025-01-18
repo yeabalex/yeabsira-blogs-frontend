@@ -26,7 +26,7 @@ export const CommentComponent: React.FC<CommentProps> = ({ comment, onReply }) =
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showReplies, setShowReplies] = useState(false);
-  const [replyCount, setReplyCount] = useState(5); // Number of replies to display
+  const [replyCount, setReplyCount] = useState(5);
 
   const handleSubmitReply = (e: React.FormEvent) => {
     e.preventDefault();

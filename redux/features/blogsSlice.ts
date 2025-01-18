@@ -12,6 +12,7 @@ type Article = {
   comments: number;
   username: string;
   userid: string;
+  liked:boolean
   createdAt: string;
   updatedAt: string;
 };
