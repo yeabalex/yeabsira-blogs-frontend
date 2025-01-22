@@ -38,7 +38,7 @@ export function InputOTPComponent() {
     e.preventDefault();
     try {
       const apiClient = new ApiClient(baseURL);
-      const res = await apiClient.post(`/api/v1/verify?email=${email}&code=${otp}`);
+      const res = await apiClient.post(`/api/v1/auth/verify?email=${email}&code=${otp}`);
       console.log(res)
       const data = (await res).data as Data;
       

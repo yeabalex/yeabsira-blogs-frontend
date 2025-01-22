@@ -24,7 +24,7 @@ const LoginPage = () => {
 
     const apiClient = new ApiClient(baseURL);
     try {
-      const res = await apiClient.post("/api/v1/login", {
+      const res = await apiClient.post("/api/v1/auth/login", {
         email,
         password,
       });

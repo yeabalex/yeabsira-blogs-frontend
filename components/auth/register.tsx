@@ -33,7 +33,7 @@ const RegisterPage = () => {
 
     const apiClient = new ApiClient(baseURL);
     try {
-      await apiClient.post("/api/v1/register", {
+      await apiClient.post("/api/v1/auth/register", {
         username,
         email,
         password,
