@@ -8,6 +8,8 @@ import { blogsBaseURL } from "@/constants/url";
 import { useDispatch } from "react-redux";
 import { setBlog } from "@/redux/features/blogsSlice";
 import { getCookie } from "@/lib/getCookie";
+import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 export interface Article {
   id: string;
@@ -34,6 +36,7 @@ export function BlogsGrid() {
   const [visibleItems, setVisibleItems] = useState(7);
   const [items,setItems] = useState<Article[]|null>(null);
   const [topics,  setTopics] = useState<string[]>([])
+  const [loading, setLoading] = useState(true);
   const apiClient = new ApiClient(blogsBaseURL)
   const dispatch = useDispatch()
 
@@ -47,6 +50,8 @@ export function BlogsGrid() {
         dispatch(setBlog(items))
       } catch (error) {
         console.error("Error fetching trending blogs:", error);
+      }finally{
+        setLoading(false);
       }
     }
   
@@ -61,7 +66,7 @@ export function BlogsGrid() {
     }
   }, [items]);
 
-  const handleTopicChange = (topic: string) => {
+  /*const handleTopicChange = (topic: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (topic === "all") {
       params.delete("topic");
@@ -71,83 +76,113 @@ export function BlogsGrid() {
     router.push(`?${params.toString()}`);
     setVisibleItems(7);
   };
-
+*/
   const filteredItems = currentTopic === "all" 
     ? items 
     : items?.filter(item => item.topics.includes(currentTopic));
   
-
+/*
   const handleShowMore = () => {
     setVisibleItems(prev => prev + 7);
   };
-
-  const handleSave = (id: string) => {
+*/
+  /*const handleSave = (id: string) => {
     console.log('Saved article:', id);
   };
-
-  const handleLike = (id: string) => {
+*/
+  /*const handleLike = (id: string) => {
     console.log('Liked article:', id);
   };
+  */
 
   return (
     <Suspense>
-    <div className="px-4 max-w-7xl mx-auto">
-      <h1 className="mt-16 text-3xl font-heading font-bold">Trending Topics</h1>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="px-6 max-w-7xl mx-auto"
+    >
+      <h1 className="mt-16 text-4xl font-heading font-bold bg-gradient-to-r from-neutral-800 to-neutral-600 dark:from-neutral-200 dark:to-neutral-400 bg-clip-text text-transparent">
+        Trending Topics
+      </h1>
       
-      {/* Topics Section */}
       <div className="mt-8">
-        <div className="flex flex-wrap gap-3">
-          <TopicButton 
-            topic="all"
-            current={currentTopic}
-            onClick={() => handleTopicChange("all")}
-          >
-            All
-          </TopicButton>
-          {topics.map((topic) => (
-            <TopicButton
-              key={topic}
-              topic={topic}
+        <AnimatePresence>
+          <div className="flex flex-wrap gap-3">
+            <TopicButton 
+              topic="all"
               current={currentTopic}
-              onClick={() => handleTopicChange(topic)}
+              onClick={() => {
+                router.push("/");
+                setVisibleItems(7);
+              }}
             >
-              {topic}
+              All
             </TopicButton>
-          ))}
-        </div>
+            {topics.map((topic) => (
+              <TopicButton
+                key={topic}
+                topic={topic}
+                current={currentTopic}
+                onClick={() => {
+                  router.push(`?topic=${topic}`);
+                  setVisibleItems(7);
+                }}
+              >
+                {topic}
+              </TopicButton>
+            ))}
+          </div>
+        </AnimatePresence>
       </div>
 
-      {/* Articles Grid */}
-      <div className="mt-8">
-        <BentoGrid 
-          className="max-w-full"
-          showMore={filteredItems?filteredItems.length > visibleItems:false}
-          onShowMore={handleShowMore}
-        >
-          {filteredItems?.slice(0, visibleItems).map((item, i) => (
-            <BentoGridItem
-              key={i}
-              postID={item.id}
-              title={item.title}
-              description={item.description}
-              header={item.thumbnail}
-              likes={item.likes}
-              views={item.views}
-              comments={item.comments}
-              liked={item.liked}
-              username={item.username}
-              link={`/${item.username}/article/${item.id}`}
-              className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-              onSave={() => handleSave(item.id)}
-              onLike={() => handleLike(item.id)}
-            />
-          ))}
-        </BentoGrid>
-      </div>
-    </div>
-    </Suspense>
+      {loading ? (
+        <div className="mt-16 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
+        </div>
+      ) : (
+        <div className="mt-8">
+          <BentoGrid 
+            className="max-w-full"
+            showMore={filteredItems ? filteredItems.length > visibleItems : false}
+            onShowMore={() => setVisibleItems(prev => prev + 7)}
+          >
+            {filteredItems?.slice(0, visibleItems).map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <BentoGridItem
+                  postID={item.id}
+                  title={item.title}
+                  description={item.description}
+                  header={item.thumbnail}
+                  likes={item.likes}
+                  views={item.views}
+                  comments={item.comments}
+                  liked={item.liked}
+                  username={item.username}
+                  link={`/${item.username}/article/${item.id}`}
+                  className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                  onSave={() => console.log('Saved:', item.id)}
+                  onLike={() => console.log('Liked:', item.id)}
+                />
+              </motion.div>
+            ))}
+          </BentoGrid>
+        </div>
+      )}
+    </motion.div>
+  </Suspense>
   );
 }
+
+
+/*const Skeleton = () => (
+  <div className="flex flex-1 w-full h-full min-h-[10rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
+);*/
 
 const TopicButton = ({ 
   children, 
@@ -159,31 +194,20 @@ const TopicButton = ({
   topic: string; 
   current: string; 
   onClick: () => void; 
-}) => {
-  const isSelected = current === topic;
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        px-4 py-2 rounded-full text-sm font-medium
-        transition-all duration-200
-        ${isSelected ? 
-          'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900' : 
-          'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
-        }
-      `}
-    >
-      {children}
-    </button>
-  );
-};
-
-/*const Skeleton = () => (
-  <div className="flex flex-1 w-full h-full min-h-[10rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100"></div>
-);*/
-
-
-
-
-
+}) => (
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={onClick}
+    className={`
+      px-4 py-2 rounded-full text-sm font-medium
+      transition-all duration-200
+      ${current === topic ? 
+        'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-lg' : 
+        'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
+      }
+    `}
+  >
+    {children}
+  </motion.button>
+);
