@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: 'https://blogserver.yeabsiraa.com/:path*',
+        source: '/api/v1/:path*',
+        destination: 'https://blogserver.yeabsiraa.com/api/v1/:path*',
       },
     ];
   },
