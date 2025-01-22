@@ -1,2 +1,2 @@
-export const baseURL = "http://localhost:3001"
-export const blogsBaseURL = "http://localhost:8080"
+export const baseURL = "https://blogserver.yeabsiraa.com"
+export const blogsBaseURL = "https://blogserver.yeabsiraa.com"

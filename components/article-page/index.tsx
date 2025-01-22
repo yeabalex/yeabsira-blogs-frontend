@@ -14,39 +14,20 @@ import { useRouter } from "next/navigation";
 import LoadingPage from "@/components/ui/loading";
 import { useDispatch } from "react-redux";
 import { setBlog } from "@/redux/features/blogsSlice";
+import { formatTimeDifference } from "@/lib/formatTimeDifference";
+import { addSummary } from "@/redux/features/aiSummarySlice";
 
 export default function Article({ id }: { id: string }) {
   const [showComments, setShowComments] = useState(false);
   const [showAISummary, setShowAISummary] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      username: "Sarah K.",
-      content: "Great article! Very insightful.",
-      timestamp: "2 hours ago",
-      replies: [
-        {
-          id: 1,
-          username: "John D.",
-          content:
-            "Totally agree! The perspectives shared here are eye-opening.",
-          timestamp: "1 hour ago",
-        },
-      ],
-    },
-    {
-      id: 2,
-      username: "Mike R.",
-      content: "Thanks for sharing this perspective.",
-      timestamp: "5 hours ago",
-      replies: [],
-    },
-  ]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [summary, setSummary] = useState<string>();
 
   const [article, setArticle] = useState<Article | null>();
   const router = useRouter();
   const [page, setPage] = useState<React.JSX.Element>();
-  const dispatch = useDispatch()
+  const [bundle, setBundle] = useState<number>(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     async function fetchArticle() {
@@ -65,7 +46,7 @@ export default function Article({ id }: { id: string }) {
             }
           );
           setArticle(res.data as Article);
-          const articleArr:Article[] = [res.data as Article]
+          const articleArr: Article[] = [res.data as Article];
           dispatch(setBlog(articleArr));
         } catch (err) {
           if ((err as Error).message === "Resource not found.") {
@@ -79,17 +60,44 @@ export default function Article({ id }: { id: string }) {
     fetchArticle();
   }, []);
 
-  function showCommentsHandler() {
-    setShowComments(!showComments);
-    if (!showComments) {
+  async function showCommentsHandler() {
+    const token = getCookie("token");
+
+    if (token && !showComments && !comments.length) {
+      setBundle(0);
+      const apiClient = new ApiClient(blogsBaseURL);
+      apiClient.setAuthToken(token);
+      const res: { data: { content: Comment[] } } = await apiClient.get(
+        `/api/v1/get/comments/${article?.id}?page=${bundle}&size=5`,
+        { requiresAuth: true }
+      );
+      setComments(res.data.content);
       router.push("#comment");
     }
+    setShowComments(!showComments);
   }
 
-  function showAISummaryHandler() {
-    setShowAISummary(!showAISummary);
-    if (!showAISummary) {
-      router.push("#ai");
+  async function showAISummaryHandler() {
+    const token = getCookie("token");
+    if (!token || !article?.content) return;
+    setShowAISummary((prev) => !prev);
+    if (!showAISummary && !summary) {
+      try {
+        if(!showAISummary) router.push("#ai");
+        const apiClient = new ApiClient(blogsBaseURL);
+        apiClient.setAuthToken(token);
+
+        const res: { data: { response: string } } = await apiClient.post(
+          "/api/v1/ai",
+          { body: { prompt: article.content } },
+          { requiresAuth: true }
+        );
+
+        if(res.data) setSummary(res.data.response);
+        dispatch(addSummary({summary: res.data.response}));
+      } catch (error) {
+        console.error("AI Summary error:", error);
+      }
     }
   }
 
@@ -98,36 +106,15 @@ export default function Article({ id }: { id: string }) {
       id: comments.length + 1,
       username: "You",
       content: content,
-      timestamp: "Just now",
-      replies: [],
+      createdAt: "Just now",
+      replies: 0,
     };
     setComments([newComment, ...comments]);
   };
 
-  const handleReply = (commentId: number, content: string) => {
-    setComments(
-      comments.map((comment) => {
-        if (comment.id === commentId) {
-          return {
-            ...comment,
-            replies: [
-              ...comment.replies,
-              {
-                id: comment.replies.length + 1,
-                username: "You",
-                content: content,
-                timestamp: "Just now",
-              },
-            ],
-          };
-        }
-        return comment;
-      })
-    );
-  };
   if (article) {
     return (
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Hero Section */}
           <div className="space-y-6 mb-8">
@@ -150,7 +137,8 @@ export default function Article({ id }: { id: string }) {
               <div>
                 <p className="font-medium">{article.username}</p>
                 <p className="text-sm text-gray-400">
-                  {article.views} views · {new Date().toLocaleDateString()}
+                  {article.views} views ·{" "}
+                  {formatTimeDifference(article.createdAt)}
                 </p>
               </div>
             </div>
@@ -168,7 +156,7 @@ export default function Article({ id }: { id: string }) {
               className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-800"
             >
               <MessageCircle size={20} />
-              <span>{comments.length}</span>
+              <span>{article.comments}</span>
             </button>
 
             <button
@@ -206,7 +194,7 @@ export default function Article({ id }: { id: string }) {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <AISummary />
+                <AISummary summary={summary} />
               </motion.div>
             )}
           </div>
@@ -223,7 +211,6 @@ export default function Article({ id }: { id: string }) {
                 <CommentsSection
                   comments={comments}
                   onAddComment={handleAddComment}
-                  onReply={handleReply}
                 />
               </motion.div>
             )}
