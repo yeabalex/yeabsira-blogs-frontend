@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
 import { ApiClient } from "@/lib/api-client";
 import { blogsBaseURL } from "@/constants/url";
-import { useDispatch } from "react-redux";
-import { setBlog } from "@/redux/features/blogsSlice";
 import { getCookie } from "@/lib/getCookie";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
@@ -29,7 +27,7 @@ export interface Article {
 }
 
 
-export function BlogsGrid() {
+export function BlogsGrid({desc}:{desc?:boolean}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTopic = searchParams.get("topic") || "all";
@@ -38,7 +36,6 @@ export function BlogsGrid() {
   const [topics,  setTopics] = useState<string[]>([])
   const [loading, setLoading] = useState(true);
   const apiClient = new ApiClient(blogsBaseURL)
-  const dispatch = useDispatch()
 
   useEffect(() => {
     async function fetchTrendingBlogs() {
@@ -46,8 +43,12 @@ export function BlogsGrid() {
         const user = getCookie("user")
         const userid = user?JSON.parse(user).id:""
         const res:{data:Article[]} = await apiClient.get(`/api/v1/trending?userid=${userid}`);
-        setItems(res.data);
-        dispatch(setBlog(items))
+        const sortedArticles = res.data.sort((a, b) => b.likes - a.likes);
+        if(desc){
+          setItems(sortedArticles)
+        }else{
+          setItems(res.data)
+        }
       } catch (error) {
         console.error("Error fetching trending blogs:", error);
       }finally{
@@ -103,7 +104,7 @@ export function BlogsGrid() {
       className="px-6 max-w-7xl mx-auto"
     >
       <h1 className="mt-16 text-4xl font-heading font-bold bg-gradient-to-r from-neutral-800 to-neutral-600 dark:from-neutral-200 dark:to-neutral-400 bg-clip-text text-transparent">
-        Trending Topics
+        {desc?"Trending Topics":"Recently Posted"}
       </h1>
       
       <div className="mt-8">

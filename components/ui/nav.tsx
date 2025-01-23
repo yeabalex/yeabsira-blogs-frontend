@@ -3,12 +3,9 @@ import { Search, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const NavbarComponent = ({ isLoggedIn, userName, userImage }:{isLoggedIn:boolean, userName:string, userImage:string}) => {
-  //const spotifyGreen = '#1DB954';
-  //const [isDark, setIsDark] = useState(false);
+const NavbarComponent = ({ isLoggedIn, userName, userImage }: { isLoggedIn: boolean, userName: string, userImage: string }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-background">
@@ -49,18 +46,23 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }:{isLoggedIn:boolean
             className="hidden md:flex items-center gap-4"
           >
             {isLoggedIn ? (
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              >
-                <img
-                  src={userImage || `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`}
-                  alt={userName}
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="font-medium dark:text-white">{userName}</span>
-              </motion.div>
+              <>
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-3 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                >
+                  <img
+                    src={userImage || `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`}
+                    alt={userName}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="font-medium dark:text-white">{userName}</span>
+                </motion.div>
+                <Link href="/create" className="px-4 py-2 rounded-full font-medium text-white bg-[#1DB954] hover:bg-[#1DB954]/90">
+                  Create
+                </Link>
+              </>
             ) : (
               <>
                 <Link href="/login" className="px-4 py-2 rounded-full font-medium hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white">
@@ -103,14 +105,19 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }:{isLoggedIn:boolean
               </div>
 
               {isLoggedIn ? (
-                <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                  <img
-                    src={userImage || `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`}
-                    alt={userName}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="font-medium dark:text-white">{userName}</span>
-                </div>
+                <>
+                  <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                    <img
+                      src={userImage || `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`}
+                      alt={userName}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="font-medium dark:text-white">{userName}</span>
+                  </div>
+                  <Link href="/create" className="block w-full px-4 py-2 rounded-lg text-white text-center bg-[#1DB954] hover:bg-[#1DB954]/90">
+                    Create
+                  </Link>
+                </>
               ) : (
                 <div className="space-y-2">
                   <Link href="/login" className="block w-full px-4 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-white">

@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 export function Hero() {
   const router = useRouter();
   const words = [
-    "Share Ideas",
-    "Build Communities",
-    "Start Conversations",
-    "Make Connections"
+    "House",
+    "Drum n Bass",
+    "Jazz",
+    "Experimental"
   ];
 
   function getStarted() {
@@ -24,7 +24,7 @@ export function Hero() {
         className="relative z-10"
       >
         <h1 className="max-w-4xl text-5xl md:text-7xl mb-6 font-heading font-bold bg-gradient-to-r from-neutral-800 to-neutral-600 dark:from-neutral-200 dark:to-neutral-400 bg-clip-text text-transparent">
-          Where Knowledge Meets Freedom of Expression
+          I Write About Electronic Music. You Can Write Too, Just Click The Button Below
         </h1>
 
         <div className="space-y-8">

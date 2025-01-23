@@ -3,6 +3,8 @@ import { MessageCircle, Eye, Bookmark, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Like from "./like";
+import Image from "next/image";
+
 
 export const BentoGrid = ({
   className,
@@ -19,7 +21,7 @@ export const BentoGrid = ({
     <div className="space-y-4">
       <div
         className={cn(
-          "grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-3 gap-4",
+          "grid md:auto-rows-[18rem] grid-cols-1 md:grid-cols-3 gap-y-8 md:gap-y-12 gap-x-4",
           className
         )}
       >
@@ -57,7 +59,7 @@ export const BentoGridItem = ({
   className?: string;
   title?: string | React.ReactNode;
   description?: string | React.ReactNode;
-  header?: React.ReactNode;
+  header: string;
   icon?: React.ReactNode;
   likes?: number;
   views?: number;
@@ -100,7 +102,17 @@ export const BentoGridItem = ({
         </button>
       </div>
       
-      <Link href={link} className="w-full h-full">{header}</Link>
+      <Link href={link} className="w-full h-full">
+  <div className="relative w-full h-full overflow-hidden">
+    <Image
+      src={header}
+      alt=""
+      layout="fill" // Ensures the image fills the parent container
+      objectFit="cover" // Ensures the image is zoomed in to cover the container
+    />
+  </div>
+</Link>
+
       
       <div className="group-hover/bento:translate-x-2 transition duration-200 space-y-4">
         <div>

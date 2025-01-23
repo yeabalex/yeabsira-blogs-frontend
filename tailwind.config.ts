@@ -24,6 +24,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'spotify-green': '#1DB954'
       },
     },
   },
