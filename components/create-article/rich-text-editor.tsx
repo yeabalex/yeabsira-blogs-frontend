@@ -67,9 +67,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
-
-  
-
   // Track content changes in the editor
   const handleContentChange = () => {
     const htmlContent = editorRef.current?.innerHTML || '';
@@ -95,15 +92,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     onContentChange(updatedContent);
   };
 
-  // Export content as HTML
-
-
   return (
     <div className="rich-text-editor bg-white dark:bg-black rounded-lg border border-gray-200 dark:border-gray-800">
       {/* Toolbar */}
       <div className="toolbar flex items-center p-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 space-x-2">
         <button
-        type='button'
+          type="button"
           onClick={() => handleStyleApply('bold', 'bold')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.bold ? 'bg-spotify-green text-white' : ''
@@ -113,7 +107,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Bold size={20} className={activeStyles.bold ? 'text-white' : 'text-spotify-green'} />
         </button>
         <button
-        type='button'
+          type="button"
           onClick={() => handleStyleApply('formatBlock', 'heading1')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.heading1 ? 'bg-spotify-green text-white' : ''
@@ -123,7 +117,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Heading1 size={20} className={activeStyles.heading1 ? 'text-white' : 'text-spotify-green'} />
         </button>
         <button
-        type='button'
+          type="button"
           onClick={() => handleStyleApply('formatBlock', 'heading2')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.heading2 ? 'bg-spotify-green text-white' : ''
@@ -133,6 +127,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Heading2 size={20} className={activeStyles.heading2 ? 'text-white' : 'text-spotify-green'} />
         </button>
         <button
+          type="button"
           onClick={() => fileInputRef.current?.click()}
           className="hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded"
           title="Upload Image"
@@ -168,6 +163,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   className="w-32 h-32 object-cover rounded-lg"
                 />
                 <button
+                  type="button"
                   onClick={() => removeImage(imageUrl)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                 >
