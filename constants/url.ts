@@ -1,3 +1,3 @@
 export const baseURL = "https://blogserver.yeabsiraa.com"
 export const blogsBaseURL = "https://blogserver.yeabsiraa.com"
-export const webBaseURL = "http://localhost:3000"
+export const webBaseURL = "https://freely.yeabsiraa.com"
