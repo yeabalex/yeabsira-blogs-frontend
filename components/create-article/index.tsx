@@ -9,7 +9,7 @@ import { getCookie } from "@/lib/getCookie";
 export interface ArticleData {
   title: string;
   description: string;
-  thumbnail: string;
+  thumbnail: string | null;
   content: string;
   topics: string[];
   likes?: number;
@@ -20,58 +20,99 @@ export interface ArticleData {
 }
 
 export default function CreateArticlePage() {
-  const [article, setArticle] = useState<Partial<ArticleData>>({
+  const [article, setArticle] = useState<ArticleData>({
+    title: "",
+    description: "",
+    thumbnail: null,
+    content: "",
     topics: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const apiClient = new ApiClient(webBaseURL);
-      const imageUrl: { data: { publicUrl: string } } = await apiClient.uploadFile(
-        "/image/upload/blog",
-        file
-      );
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setArticle((prev) => ({ ...prev, thumbnail: imageUrl.data.publicUrl }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        const apiClient = new ApiClient(webBaseURL);
+        const imageUrl: { data: { publicUrl: string } } = await apiClient.uploadFile(
+          "/image/upload/blog",
+          file
+        );
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setArticle((prev) => ({ ...prev, thumbnail: imageUrl.data.publicUrl }));
+        };
+        reader.readAsDataURL(file);
+      } catch (err) {
+        setErrorMessage("Failed to upload thumbnail");
+        console.error(err);
+      }
     }
   };
 
   const handleThumbnailRemove = () => {
-    setArticle((prev) => ({ ...prev, thumbnail: undefined }));
+    setArticle((prev) => ({ ...prev, thumbnail: null }));
+  };
+
+  const validateForm = () => {
+    const { title, description, content, topics } = article;
+    if (!title) {
+      setErrorMessage("Title is required");
+      return false;
+    }
+    if (!description) {
+      setErrorMessage("Description is required");
+      return false;
+    }
+    if (!content) {
+      setErrorMessage("Content is required");
+      return false;
+    }
+    if (topics.length === 0) {
+      setErrorMessage("At least one topic is required");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    if (!validateForm()) return;
+
     setIsLoading(true);
-    setSuccessMessage(""); // Clear any previous success message
     try {
-      const apiClient = new ApiClient(blogsBaseURL);
       const token = getCookie("token");
       const user = getCookie("user");
 
       if (token && user) {
-        setArticle((prev) => ({
-          ...prev,
-          userid: JSON.parse(user).id,
-          username: JSON.parse(user).username,
+        const parsedUser = JSON.parse(user);
+        const finalArticle = {
+          ...article,
+          userid: parsedUser.id,
+          username: parsedUser.username,
           likes: 0,
           views: 0,
           comments: 0,
-        }));
+        };
+
+        const apiClient = new ApiClient(blogsBaseURL);
         apiClient.setAuthToken(token);
-        await apiClient.post("/api/v1/add/article", article, { requiresAuth: true });
+        
+        await apiClient.post("/api/v1/add/article", finalArticle, { requiresAuth: true });
 
         setSuccessMessage("Article created successfully! 🎉");
-        setArticle({ topics: [] }); // Clear the form after success
+        setArticle({ title: "", description: "", thumbnail: null, content: "", topics: [] }); // Clear the form after success
+      } else {
+        setErrorMessage("Please log in to create an article");
       }
     } catch (err) {
       console.error(err);
+      setErrorMessage("Failed to create article. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -103,6 +144,12 @@ export default function CreateArticlePage() {
         {successMessage && (
           <div className="mb-4 p-4 text-green-700 bg-green-100 rounded-lg">
             {successMessage}
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-lg">
+            {errorMessage}
           </div>
         )}
 
