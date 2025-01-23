@@ -103,6 +103,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       {/* Toolbar */}
       <div className="toolbar flex items-center p-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 space-x-2">
         <button
+        type='button'
           onClick={() => handleStyleApply('bold', 'bold')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.bold ? 'bg-spotify-green text-white' : ''
@@ -112,6 +113,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Bold size={20} className={activeStyles.bold ? 'text-white' : 'text-spotify-green'} />
         </button>
         <button
+        type='button'
           onClick={() => handleStyleApply('formatBlock', 'heading1')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.heading1 ? 'bg-spotify-green text-white' : ''
@@ -121,6 +123,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Heading1 size={20} className={activeStyles.heading1 ? 'text-white' : 'text-spotify-green'} />
         </button>
         <button
+        type='button'
           onClick={() => handleStyleApply('formatBlock', 'heading2')}
           className={`hover:bg-spotify-green hover:bg-opacity-20 p-2 rounded ${
             activeStyles.heading2 ? 'bg-spotify-green text-white' : ''
