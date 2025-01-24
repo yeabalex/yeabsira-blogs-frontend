@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 export function Hero() {
   const router = useRouter();
   const words = [
-    "House",
-    "Drum n Bass",
-    "Jazz",
-    "Experimental"
+    "Uncover",
+    "Engage",
+    "Discover",
+    "Connect"
   ];
 
   function getStarted() {
