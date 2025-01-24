@@ -8,7 +8,7 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }: { isLoggedIn: bool
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-background">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-background font-sans">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <motion.div 
@@ -17,7 +17,7 @@ const NavbarComponent = ({ isLoggedIn, userName, userImage }: { isLoggedIn: bool
             className="flex items-center gap-2"
           >
             <Link href="/" className="text-2xl font-bold text-neutral-900 dark:text-white">
-              Free.<span className="text-[#1DB954]">ly</span>
+              free<span className="text-[#1DB954]">.ly</span>
             </Link>
           </motion.div>
 

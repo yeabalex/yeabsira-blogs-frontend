@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { FlipWords } from "../ui/flip-words";
 import { useRouter } from "next/navigation";
+import type { Metadata } from "next";
 
 export function Hero() {
   const router = useRouter();
@@ -12,6 +13,9 @@ export function Hero() {
     "Discover",
     "Connect"
   ];
+  const metadata:Metadata = {
+    title:"Bob"
+  }
 
   function getStarted() {
     router.push("/register");

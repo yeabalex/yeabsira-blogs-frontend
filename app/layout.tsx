@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import {store} from "@/redux/store"
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 
-
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter'
@@ -23,6 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Provider store={store}>
+        <head>
+          <title>Free.ly</title>
+          <link rel="icon" href="free.png" type="image/png"></link>
+        </head>
       <body
         className={`${inter.variable} ${plusJakarta.variable} antialiased`}
       >
